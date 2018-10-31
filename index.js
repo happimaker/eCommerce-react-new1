@@ -53,6 +53,11 @@ app.post(
 
 app.post("/logout", (req, res) => {
   const token = req.cookies.token;
+  if (token == null) {
+    res.sendStatus(400);
+    return;
+  }
+
   redisClient.del(token, err => {
     if (err) {
       res.sendStatus(403);
