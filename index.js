@@ -21,16 +21,15 @@ const OPTS = {
   }
 };
 
-const redisClient = redis.createClient(6379, REDIS_HOST);
-
-const app = express();
-
 passport.use(new LdapStrategy(OPTS));
 
+const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(passport.initialize());
+
+const redisClient = redis.createClient(6379, REDIS_HOST);
 
 app.post(
   "/login",
@@ -41,8 +40,7 @@ app.post(
 
     redisClient.set(token, username, err => {
       if (err) {
-        res.sendStatus(500);
-        return;
+        return res.sendStatus(500);
       }
 
       res.cookie("token", token);
@@ -54,8 +52,7 @@ app.post(
 app.post("/logout", (req, res) => {
   const token = req.cookies.token;
   if (token == null) {
-    res.sendStatus(400);
-    return;
+    return res.sendStatus(400);
   }
 
   redisClient.del(token, err => {
@@ -64,6 +61,20 @@ app.post("/logout", (req, res) => {
     } else {
       res.sendStatus(200);
     }
+  });
+});
+
+app.get("/user", (req, res) => {
+  const token = req.cookies.token;
+  if (token == null) {
+    return res.json(null);
+  }
+
+  redisClient.get(token, (err, username) => {
+    if (err) {
+      return res.sendStatus(403);
+    }
+    res.json({ username });
   });
 });
 
