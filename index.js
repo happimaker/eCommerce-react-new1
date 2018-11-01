@@ -74,7 +74,7 @@ app.get("/user", (req, res) => {
     if (err) {
       return res.sendStatus(403);
     }
-    res.json({ username });
+    res.json(username && { username });
   });
 });
 
