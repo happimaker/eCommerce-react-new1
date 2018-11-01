@@ -1,0 +1,10 @@
+before_script:
+  - docker info
+
+build_image:
+  stage: build
+  script:
+    - docker build . -t docker.maxiv.lu.se/webjive-auth
+    - docker push docker.maxiv.lu.se/webjive-auth
+  only:
+    - master
