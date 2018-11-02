@@ -43,14 +43,14 @@ app.post(
         return res.sendStatus(500);
       }
 
-      res.cookie("token", token);
+      res.cookie("webjive_token", token);
       res.sendStatus(200);
     });
   }
 );
 
 app.post("/logout", (req, res) => {
-  const token = req.cookies.token;
+  const token = req.cookies.webjive_token;
   if (token == null) {
     return res.sendStatus(400);
   }
@@ -65,7 +65,7 @@ app.post("/logout", (req, res) => {
 });
 
 app.get("/user", (req, res) => {
-  const token = req.cookies.token;
+  const token = req.cookies.webjive_token;
   if (token == null) {
     return res.json(null);
   }
