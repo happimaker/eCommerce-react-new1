@@ -95,7 +95,7 @@ app.post("/extend", (req, res) => {
   const extended = extendToken(jwt);
 
   if (extended == null) {
-    res.sendStatus(403);
+    res.clearCookie(COOKIE_NAME).sendStatus(403);
   } else {
     res.cookie(COOKIE_NAME, extended).send();
   }
