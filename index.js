@@ -92,7 +92,7 @@ app.post("/renew", (req, res) => {
 app.get("/user", (req, res) => {
   const token = req.cookies[COOKIE_NAME];
   const username = usernameFromToken(token);
-  res.json({ username });
+  res.json(username && { username });
 });
 
 app.listen(8080);
