@@ -3,13 +3,42 @@ const express = require("express"),
   bodyParser = require("body-parser"),
   cookieParser = require("cookie-parser"),
   LdapStrategy = require("passport-ldapauth"),
-  redis = require("redis"),
-  uuid = require("uuid"),
-  dotenv = require("dotenv");
+  dotenv = require("dotenv"),
+  jsonwebtoken = require("jsonwebtoken");
 
 dotenv.config();
 
-const { LDAP_CREDENTIALS, LDAP_BIND, LDAP_URL, REDIS_HOST } = process.env;
+function unique(arr) {
+  return arr.filter((elem, i) => arr.indexOf(elem) === i);
+}
+
+function generateToken(username, groups) {
+  const payload = { username, groups };
+  return jsonwebtoken.sign(payload, SECRET, { expiresIn: EXPIRY_TIME });
+}
+
+function extendToken(jwt) {
+  try {
+    const { username, groups } = jsonwebtoken.verify(jwt, SECRET);
+    return generateToken(username, groups);
+  } catch (err) {
+    return null;
+  }
+}
+
+function usernameFromToken(jwt) {
+  try {
+    const { username } = jsonwebtoken.verify(jwt, SECRET);
+    return username;
+  } catch (err) {
+    return null;
+  }
+}
+
+const { LDAP_CREDENTIALS, LDAP_BIND, LDAP_URL, SECRET } = process.env;
+
+const EXPIRY_TIME = "1h";
+const COOKIE_NAME = "webjive_jwt";
 
 const OPTS = {
   server: {
@@ -29,53 +58,41 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(passport.initialize());
 
-const redisClient = redis.createClient(6379, REDIS_HOST);
-
 app.post(
   "/login",
   passport.authenticate("ldapauth", { session: false }),
   (req, res) => {
     const username = req.body.username;
-    const token = uuid.v4();
+    const memberOf = req.user.memberOf || [];
+    const groups = unique(
+      memberOf
+        .map(group => group.split(","))
+        .reduce((all, curr) => [...all, ...curr])
+        .map(x => x.split("="))
+        .filter(pair => pair[0] === "CN")
+        .map(pair => pair[1])
+    );
 
-    redisClient.set(token, username, err => {
-      if (err) {
-        return res.sendStatus(500);
-      }
-
-      res.cookie("webjive_token", token);
-      res.sendStatus(200);
-    });
+    const jwt = generateToken(username, groups);
+    res.cookie(COOKIE_NAME, jwt).send();
   }
 );
 
-app.post("/logout", (req, res) => {
-  const token = req.cookies.webjive_token;
-  if (token == null) {
-    return res.sendStatus(400);
-  }
+app.post("/renew", (req, res) => {
+  const jwt = req.cookies[COOKIE_NAME];
+  const renewed = extendToken(jwt);
 
-  redisClient.del(token, err => {
-    if (err) {
-      res.sendStatus(403);
-    } else {
-      res.sendStatus(200);
-    }
-  });
+  if (renewed == null) {
+    res.sendStatus(403);
+  } else {
+    res.cookie(COOKIE_NAME, renewed).send();
+  }
 });
 
 app.get("/user", (req, res) => {
-  const token = req.cookies.webjive_token;
-  if (token == null) {
-    return res.json(null);
-  }
-
-  redisClient.get(token, (err, username) => {
-    if (err) {
-      return res.sendStatus(403);
-    }
-    res.json(username && { username });
-  });
+  const token = req.cookies[COOKIE_NAME];
+  const username = usernameFromToken(token);
+  res.json({ username });
 });
 
 app.listen(8080);
