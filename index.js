@@ -101,6 +101,10 @@ app.post("/renew", (req, res) => {
   }
 });
 
+app.post("/logout", (_, res) => {
+  res.clearCookie(COOKIE_NAME).send();
+});
+
 app.get("/user", (req, res) => {
   const token = req.cookies[COOKIE_NAME];
   const username = usernameFromToken(token);
