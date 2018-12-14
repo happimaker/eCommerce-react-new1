@@ -90,14 +90,14 @@ app.post(
   }
 );
 
-app.post("/renew", (req, res) => {
+app.post("/extend", (req, res) => {
   const jwt = req.cookies[COOKIE_NAME];
-  const renewed = extendToken(jwt);
+  const extended = extendToken(jwt);
 
-  if (renewed == null) {
+  if (extended == null) {
     res.sendStatus(403);
   } else {
-    res.cookie(COOKIE_NAME, renewed).send();
+    res.cookie(COOKIE_NAME, extended).send();
   }
 });
 
