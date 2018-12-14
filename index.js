@@ -80,7 +80,7 @@ app.post(
       memberOf
         .map(group => group.split(","))
         .reduce((all, curr) => [...all, ...curr])
-        .map(x => x.split("="))
+        .map(entry => entry.split("="))
         .filter(pair => pair[0] === "CN")
         .map(pair => pair[1])
     );
