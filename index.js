@@ -13,6 +13,14 @@ function unique(arr) {
 }
 
 function generateToken(username, groups) {
+  if (username == null) {
+    throw new Error("username musn't be null");
+  }
+
+  if (!Array.isArray(groups)) {
+    throw new Error("groups must be an array");
+  }
+
   const payload = { username, groups };
   return jsonwebtoken.sign(payload, SECRET, { expiresIn: EXPIRY_TIME });
 }
@@ -63,6 +71,10 @@ app.post(
   passport.authenticate("ldapauth", { session: false }),
   (req, res) => {
     const username = req.body.username;
+    if (username == null) {
+      return res.sendStatus(400);
+    }
+
     const memberOf = req.user.memberOf || [];
     const groups = unique(
       memberOf
