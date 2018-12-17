@@ -21,9 +21,7 @@ function generateToken(username, groups) {
     throw new Error("groups must be an array");
   }
 
-  const extra = process.env.TEST ? { test: true } : {};
-  const payload = { username, groups, ...extra };
-
+  const payload = { username, groups };
   return jsonwebtoken.sign(payload, SECRET, { expiresIn: EXPIRY_TIME });
 }
 
