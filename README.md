@@ -13,4 +13,4 @@ Build and run:
 
 Todo:
 
-* Persistence in Redis (mount volume)
+* Make searchBase and searchFilter configurable
