@@ -43,6 +43,17 @@ function usernameFromToken(jwt) {
   }
 }
 
+// This middleware adds a virtual user, credentials impotent/impotent, which isn't a member of any group
+function impotentUserMiddleware(req, res, next) {
+  const { username, password } = req.body;
+  if (username === "impotent" && password === "impotent") {
+    const jwt = generateToken(username, []);
+    res.cookie(COOKIE_NAME, jwt).send();
+  } else {
+    next();
+  }
+}
+
 const { LDAP_CREDENTIALS, LDAP_BIND, LDAP_URL, SECRET } = process.env;
 
 const EXPIRY_TIME = "1h";
@@ -68,6 +79,7 @@ app.use(passport.initialize());
 
 app.post(
   "/login",
+  impotentUserMiddleware,
   passport.authenticate("ldapauth", { session: false }),
   (req, res) => {
     const username = req.body.username;
