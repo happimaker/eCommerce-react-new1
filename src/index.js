@@ -1,16 +1,11 @@
+const dotenv = require("dotenv");
+dotenv.config();
+
 const express = require("express"),
   passport = require("passport"),
   bodyParser = require("body-parser"),
   cookieParser = require("cookie-parser"),
-  LdapStrategy = require("passport-ldapauth"),
-  dotenv = require("dotenv"),
   jsonwebtoken = require("jsonwebtoken");
-
-dotenv.config();
-
-function unique(arr) {
-  return arr.filter((elem, i) => arr.indexOf(elem) === i);
-}
 
 function generateToken(username, groups) {
   if (username == null) {
@@ -43,33 +38,24 @@ function usernameFromToken(jwt) {
   }
 }
 
-// This middleware adds a virtual user, credentials impotent/impotent, which isn't a member of any group
-function impotentUserMiddleware(req, res, next) {
-  const { username, password } = req.body;
-  if (username === "impotent" && password === "impotent") {
-    const jwt = generateToken(username, []);
-    res.cookie(COOKIE_NAME, jwt).send();
-  } else {
-    next();
-  }
-}
-
-const { LDAP_CREDENTIALS, LDAP_BIND, LDAP_URL, SECRET } = process.env;
-
+const { SECRET, LDAP_URL, LDAP_BIND, LDAP_CREDENTIALS } = process.env;
 const EXPIRY_TIME = "1h";
 const COOKIE_NAME = "webjive_jwt";
+const PORT = 8080;
 
-const OPTS = {
-  server: {
-    url: LDAP_URL,
-    bindDN: LDAP_BIND,
-    bindCredentials: LDAP_CREDENTIALS,
-    searchBase: "CN=Users,DC=maxlab,DC=lu,DC=se",
-    searchFilter: "(sAMAccountName={{username}})"
-  }
-};
+const strategies = ["local.impotent", "local.file"];
 
-passport.use(new LdapStrategy(OPTS));
+const impotentStrategy = require("./strategies/impotent");
+passport.use("local.impotent", impotentStrategy);
+
+const fileStrategy = require("./strategies/file");
+passport.use("local.file", fileStrategy);
+
+if (LDAP_URL && LDAP_BIND && LDAP_CREDENTIALS) {
+  const ldapStrategy = require("./strategies/ldap");
+  passport.use(ldapStrategy);
+  strategies.push("ldapauth");
+}
 
 const app = express();
 app.use(bodyParser.json());
@@ -77,30 +63,21 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(passport.initialize());
 
-app.post(
-  "/login",
-  impotentUserMiddleware,
-  passport.authenticate("ldapauth", { session: false }),
-  (req, res) => {
-    const username = req.body.username;
-    if (username == null) {
-      return res.sendStatus(400);
-    }
-
-    const memberOf = req.user.memberOf || [];
-    const groups = unique(
-      memberOf
-        .map(group => group.split(","))
-        .reduce((all, curr) => [...all, ...curr])
-        .map(entry => entry.split("="))
-        .filter(pair => pair[0] === "CN")
-        .map(pair => pair[1])
-    );
-
-    const jwt = generateToken(username, groups);
-    res.cookie(COOKIE_NAME, jwt).send();
-  }
+const passportMiddleware = passport.authenticate(
+  strategies,
+  { session: false }
 );
+
+app.post("/login", passportMiddleware, (req, res) => {
+  const { user } = req;
+  if (user === null) {
+    return res.sendStatus(400);
+  }
+
+  const { username, groups } = user;
+  const jwt = generateToken(username, groups);
+  res.cookie(COOKIE_NAME, jwt).send();
+});
 
 app.post("/extend", (req, res) => {
   const jwt = req.cookies[COOKIE_NAME];
@@ -123,4 +100,14 @@ app.get("/user", (req, res) => {
   res.json(username && { username });
 });
 
-app.listen(8080);
+const server = app.listen(PORT, () => {
+  console.log(`Listening on port ${PORT}`);
+});
+
+process.on("SIGTERM", () => {
+  server.close();
+});
+
+process.on("SIGINT", () => {
+  server.close();
+});
