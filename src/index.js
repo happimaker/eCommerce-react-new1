@@ -73,10 +73,10 @@ app.post("/login", passportMiddleware, (req, res) => {
   if (user === null) {
     return res.sendStatus(400);
   }
-
   const { username, groups } = user;
   const jwt = generateToken(username, groups);
-  res.cookie(COOKIE_NAME, jwt).send();
+  res.cookie(COOKIE_NAME, jwt);
+  res.json({webjive_jwt: jwt});
 });
 
 app.post("/extend", (req, res) => {
