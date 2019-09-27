@@ -101,15 +101,10 @@ app.post("/logout", (_, res) => {
   res.clearCookie(COOKIE_NAME).send();
 });
 
-app.get("/username", (req, res) => {
-  const token = req.cookies[COOKIE_NAME];
-  const username = usernameFromToken(token);
-  res.json(username && { username });
-});
 app.get("/user", (req, res) => {
   const token = req.cookies[COOKIE_NAME];
   const user = userFromToken(token);
-  res.json(user && user);
+  res.json(user);
 });
 
 const server = app.listen(PORT, () => {
