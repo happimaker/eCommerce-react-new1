@@ -28,6 +28,13 @@ function extendToken(jwt) {
     return null;
   }
 }
+function userFromToken(jwt){
+  try {
+    return jsonwebtoken.verify(jwt, SECRET);
+  } catch (err) {
+    return null;
+  }
+}
 
 function usernameFromToken(jwt) {
   try {
@@ -94,10 +101,15 @@ app.post("/logout", (_, res) => {
   res.clearCookie(COOKIE_NAME).send();
 });
 
-app.get("/user", (req, res) => {
+app.get("/username", (req, res) => {
   const token = req.cookies[COOKIE_NAME];
   const username = usernameFromToken(token);
   res.json(username && { username });
+});
+app.get("/user", (req, res) => {
+  const token = req.cookies[COOKIE_NAME];
+  const user = userFromToken(token);
+  res.json(user && user);
 });
 
 const server = app.listen(PORT, () => {
