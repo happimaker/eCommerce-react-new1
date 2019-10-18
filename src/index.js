@@ -28,6 +28,13 @@ function extendToken(jwt) {
     return null;
   }
 }
+function userFromToken(jwt){
+  try {
+    return jsonwebtoken.verify(jwt, SECRET);
+  } catch (err) {
+    return null;
+  }
+}
 
 function usernameFromToken(jwt) {
   try {
@@ -73,10 +80,10 @@ app.post("/login", passportMiddleware, (req, res) => {
   if (user === null) {
     return res.sendStatus(400);
   }
-
   const { username, groups } = user;
   const jwt = generateToken(username, groups);
-  res.cookie(COOKIE_NAME, jwt).send();
+  res.cookie(COOKIE_NAME, jwt);
+  res.json({webjive_jwt: jwt});
 });
 
 app.post("/extend", (req, res) => {
@@ -96,8 +103,8 @@ app.post("/logout", (_, res) => {
 
 app.get("/user", (req, res) => {
   const token = req.cookies[COOKIE_NAME];
-  const username = usernameFromToken(token);
-  res.json(username && { username });
+  const user = userFromToken(token);
+  res.json(user);
 });
 
 const server = app.listen(PORT, () => {
