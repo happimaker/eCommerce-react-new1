@@ -1,7 +1,7 @@
-const LocalStrategy = require("passport-local");
+const LocalStrategy = require('passport-local');
 
-const USERNAME = "impotent";
-const PASSWORD = "impotent";
+const USERNAME = 'impotent';
+const PASSWORD = 'impotent';
 
 module.exports = new LocalStrategy((username, password, done) => {
   if (username === USERNAME && password === PASSWORD) {
