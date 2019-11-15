@@ -11,7 +11,7 @@
     "quick-lint": "eslint --ignore-path .gitignore .; exit 0",
     "linting": "eslint --ignore-path .gitignore . -f 'junit' -o linting.xml",
     "test": "jest --ci --reporters=default --reporters=jest-junit",
-    "coverage": "npm test -- --colors --coverage"
+    "coverage": "jest --ci --colors --coverage --coverageDirectory=build/coverage"
   },
   "author": "",
   "license": "ISC",
@@ -42,6 +42,7 @@
     "supertest": "^4.0.2"
   },
   "jest": {
+    "coverageReporters": ["text", "cobertura", "html"],
     "testEnvironment": "node",
     "coveragePathIgnorePatterns": [
       "/node_modules/"
