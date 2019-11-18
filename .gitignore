@@ -8,7 +8,7 @@
 /build
 
 # coverage and reports
-/coverage/
+/reports/
 junit.xml
 linting.xml
 

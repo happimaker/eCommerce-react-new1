@@ -58,12 +58,12 @@ test_coverage:
       - node_modules/
     policy: pull
   script:
-    - mkdir build
+    - mkdir -p build/reports
     - npm run test
-    - mv junit.xml build/reports/unit-tests.xml
     - npm run linting
-    - mv linting.xml build/reports/linting.xml
     - npm run coverage
+    - mv junit.xml build/reports/unit-tests.xml
+    - mv linting.xml build/reports/linting.xml
     - mv build/reports/cobertura-coverage.xml build/reports/code-coverage.xml
   artifacts:
     paths:
