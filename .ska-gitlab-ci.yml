@@ -155,6 +155,7 @@ build_image:
 
 create ci metrics:
   stage: .post
+  image: docker:stable
   when: always
   tags:
     - docker-executor
