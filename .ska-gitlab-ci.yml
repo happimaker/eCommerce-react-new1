@@ -64,7 +64,7 @@ test_coverage:
     - npm run coverage
     - mv junit.xml build/reports/unit-tests.xml
     - mv linting.xml build/reports/linting.xml
-    - mv build/reports/cobertura-coverage.xml build/reports/code-coverage.xml
+    - mv build/coverage/cobertura-coverage.xml build/reports/code-coverage.xml
   artifacts:
     paths:
       - build/
