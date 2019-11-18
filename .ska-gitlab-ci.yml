@@ -155,14 +155,12 @@ build_image:
 
 create ci metrics:
   stage: .post
-  image: docker:stable
   when: always
   tags:
     - docker-executor
   script:
     # Gitlab CI badges creation: START
-    # - apt-get -y update
-    - apt-get install -y curl --no-install-recommends
+    - apk add --no-cache curl
     - curl -s https://gitlab.com/ska-telescope/ci-metrics-utilities/raw/master/scripts/ci-badges-func.sh | sh
     # Gitlab CI badges creation: END
   artifacts:
