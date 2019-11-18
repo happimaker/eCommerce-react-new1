@@ -60,11 +60,11 @@ test_coverage:
   script:
     - mkdir build
     - npm run test
-    - mv junit.xml build/coverage/unit-tests.xml
+    - mv junit.xml build/reports/unit-tests.xml
     - npm run linting
-    - mv linting.xml build/coverage/linting.xml
+    - mv linting.xml build/reports/linting.xml
     - npm run coverage
-    - mv build/coverage/cobertura-coverage.xml build/coverage/code-coverage.xml
+    - mv build/reports/cobertura-coverage.xml build/reports/code-coverage.xml
   artifacts:
     paths:
       - build/
