@@ -7,9 +7,9 @@ from datetime import datetime
 
 ci_metrics_fp = "build/reports/ci-metrics.json"
 
-if os.path.isfile(ci_metrics_fp):
-    print("INFO ci-metrics.json file already exists, using the data present in that file")
-    sys.exit(0)
+# if os.path.isfile(ci_metrics_fp):
+#     print("INFO ci-metrics.json file already exists, using the data present in that file")
+#     sys.exit(0)
 
 
 def count_metrics(tree):
@@ -66,9 +66,6 @@ try:
             break
 except Exception as e:
     print("WARNING failed to parse pipeline data:", e)
-
-env_commit_sha = "dummy"
-latest_build_timestamp = "some timestamp"
 
 # parse coverage report
 cov_tree = None
