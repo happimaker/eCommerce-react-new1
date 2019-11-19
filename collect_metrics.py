@@ -39,7 +39,7 @@ def list_nodes(tree):
         print(child.get("errors"), child.get("failures"), child.get("tests"))
 
 
-read environment variables
+# read environment variables
 env_commit_sha = os.environ['CI_COMMIT_SHA']
 env_project_id = os.environ['CI_PROJECT_ID']
 
