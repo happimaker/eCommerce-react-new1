@@ -168,7 +168,8 @@ create ci metrics:
     - rm -r /usr/lib/python*/ensurepip && \
     - pip3 install --no-cache --upgrade pip setuptools wheel && \
     - if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi
-    - python3 collect_metrics.py
+    - ls .
+    - python3 ./collect_metrics.py
     - mkdir -p build/badges
     - pip3 install anybadge
     - curl https://gitlab.com/ska-telescope/ci-metrics-utilities/raw/master/scripts/create_badges.py | python3
