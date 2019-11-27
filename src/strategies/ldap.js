@@ -1,4 +1,4 @@
-const LdapStrategy = require("passport-ldapauth");
+const LdapStrategy = require('passport-ldapauth');
 
 const { LDAP_CREDENTIALS, LDAP_BIND, LDAP_URL } = process.env;
 
@@ -11,22 +11,22 @@ const OPTS = {
     url: LDAP_URL,
     bindDN: LDAP_BIND,
     bindCredentials: LDAP_CREDENTIALS,
-    searchBase: "CN=Users,DC=maxlab,DC=lu,DC=se", // TODO: make configurable
-    searchFilter: "(sAMAccountName={{username}})" // TODO: make configurable
+    searchBase: 'CN=Users,DC=maxlab,DC=lu,DC=se', // TODO: make configurable
+    searchFilter: '(sAMAccountName={{username}})', // TODO: make configurable
   },
-  passReqToCallback: true
+  passReqToCallback: true,
 };
 
 module.exports = new LdapStrategy(OPTS, (req, user, done) => {
-  const username = req.body.username;
+  const { username } = req.body;
   const memberOf = user.memberOf || [];
   const groups = unique(
     memberOf
-      .map(group => group.split(","))
+      .map((group) => group.split(','))
       .reduce((all, curr) => [...all, ...curr])
-      .map(entry => entry.split("="))
-      .filter(pair => pair[0] === "CN")
-      .map(pair => pair[1])
+      .map((entry) => entry.split('='))
+      .filter((pair) => pair[0] === 'CN')
+      .map((pair) => pair[1]),
   );
 
   done(null, { username, groups });
