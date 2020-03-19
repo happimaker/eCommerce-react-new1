@@ -73,7 +73,7 @@ test_coverage:
   script:
     - mkdir -p build/reports
     - npm run test
-    - npm run linting --silent
+    - npm run linting
     - npm run coverage
     - mv junit.xml build/reports/unit-tests.xml
     - mv linting.xml build/reports/linting.xml
