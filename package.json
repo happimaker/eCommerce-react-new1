@@ -8,7 +8,6 @@
     "url": "https://gitlab.com/MaxIV/webjive-auth"
   },
   "scripts": {
-    "quick-lint": "eslint --ignore-path .gitignore .; exit 0",
     "linting": "eslint --ignore-path .gitignore . -f 'junit' -o linting.xml",
     "test": "jest --ci --reporters=default --reporters=jest-junit",
     "coverage": "jest --ci --colors --coverage --coverageDirectory=build/coverage"
@@ -16,33 +15,37 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "acorn": "^6.3.0",
+    "acorn": "^6.4.1",
     "body-parser": "^1.19.0",
-    "cookie-parser": "^1.4.4",
+    "cookie-parser": "^1.4.5",
     "dotenv": "^6.2.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
-    "passport": "^0.4.0",
-    "passport-ldapauth": "^2.1.3",
+    "passport": "^0.4.1",
+    "passport-ldapauth": "^2.1.4",
     "passport-local": "^1.0.0",
-    "typescript": "^3.7.2"
+    "typescript": "^3.8.3"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^2.7.0",
-    "@typescript-eslint/parser": "^2.7.0",
-    "eslint": "^6.6.0",
-    "eslint-config-airbnb": "^18.0.1",
-    "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-plugin-import": "^2.18.2",
+    "@typescript-eslint/eslint-plugin": "^2.24.0",
+    "@typescript-eslint/parser": "^2.24.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb": "^18.1.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-jsx-a11y": "^6.2.3",
-    "eslint-plugin-react": "^7.16.0",
+    "eslint-plugin-react": "^7.19.0",
     "eslint-plugin-react-hooks": "^1.7.0",
     "jest": "^24.9.0",
     "jest-junit": "^9.0.0",
     "supertest": "^4.0.2"
   },
   "jest": {
-    "coverageReporters": ["text", "cobertura", "html"],
+    "coverageReporters": [
+      "text",
+      "cobertura",
+      "html"
+    ],
     "testEnvironment": "node",
     "coveragePathIgnorePatterns": [
       "/node_modules/"
