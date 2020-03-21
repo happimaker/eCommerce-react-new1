@@ -42,7 +42,11 @@
     "supertest": "^4.0.2"
   },
   "jest": {
-    "coverageReporters": ["text", "cobertura", "html"],
+    "coverageReporters": [
+      "text",
+      "cobertura",
+      "html"
+    ],
     "testEnvironment": "node",
     "coveragePathIgnorePatterns": [
       "/node_modules/"

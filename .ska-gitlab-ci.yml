@@ -149,22 +149,14 @@ build_image:
   stage: image
   image: docker:stable
   before_script:
-  - docker login -u $DOCKER_REGISTRY_USERNAME -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY_HOST
+  - "export VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') && \
+   docker login -u $DOCKER_REGISTRY_USERNAME -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY_HOST && \
+   echo $USERS > users.json"
   script:
-    - docker build . -t nexus.engageska-portugal.pt/ska-docker/webjive-develop_auth:master --label GIT_COMMIT=$CI_COMMIT_SHA
-    - docker push nexus.engageska-portugal.pt/ska-docker/webjive-develop_auth:master
-  only:
-    - master
-
-  stage: image
-  image: docker:stable
-  before_script:
-  - docker login -u $DOCKER_REGISTRY_USERNAME -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY_HOST
-  script:
-    - docker build . -t nexus.engageska-portugal.pt/ska-docker/webjive-develop_auth:develop --label GIT_COMMIT=$CI_COMMIT_SHA
-    - docker push nexus.engageska-portugal.pt/ska-docker/webjive-develop_auth:develop
-  only:
-    - develop
+    - docker build . -t nexus.engageska-portugal.pt/ska-telescope/webjive-auth:latest --label GIT_COMMIT=$CI_COMMIT_SHA
+    - docker tag nexus.engageska-portugal.pt/ska-telescope/webjive-auth:latest nexus.engageska-portugal.pt/ska-telescope/webjive-auth:$VERSION
+    - docker push nexus.engageska-portugal.pt/ska-telescope/webjive-auth:latest
+    - docker push nexus.engageska-portugal.pt/ska-telescope/webjive-auth:$VERSION
 
 create ci metrics:
   stage: .post

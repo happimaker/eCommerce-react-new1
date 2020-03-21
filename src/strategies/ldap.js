@@ -20,8 +20,9 @@ const OPTS = {
 module.exports = new LdapStrategy(OPTS, (req, user, done) => {
   const { username } = req.body;
   let memberOf = user.memberOf || [];
-   //funny thing here -- if the user only is a member of a single (1) group, 'memberOf' doesn't return a string
-  //array of length 1, it just returns a string!
+  // funny thing here -- if the user only is a member of a single (1) group
+  // 'memberOf' doesn't return a string
+  // array of length 1, it just returns a string!
   if (!Array.isArray(memberOf)) {
     memberOf = [memberOf];
   }
