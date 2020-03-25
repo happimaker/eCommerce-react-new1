@@ -34,6 +34,7 @@ stages:
   - dependencies
   - test
   - deploy
+  - increment
   - image
 
 # We need to ensure that the files from any previous build have been removed before we start otherwise we could pick up
@@ -145,18 +146,42 @@ build_deploy:
       - public
     expire_in: 30 days
 
-build_image:
+auto_increment_build_number:
+  stage: increment
+  variables:
+    VAR_NAME: BUILD_NUMBER
+    TOKEN: ${CI_PIPELINE_IID_TOKEN}
+    GITLAB_URL: "https://gitlab.com"
+  before_script:
+  - apk add --update curl jq
+  script:
+  - "VAR=$(curl -s -f  --header \"PRIVATE-TOKEN: ${TOKEN}\" \"${GITLAB_URL}/api/v4/projects/${CI_PROJECT_ID}/variables/${VAR_NAME}\" | jq  -r '.value' ) "
+  - let VAR=VAR+1
+  - "curl -s -f --request PUT --header \"PRIVATE-TOKEN: ${TOKEN}\" \"${GITLAB_URL}/api/v4/projects/${CI_PROJECT_ID}/variables/${VAR_NAME}\" --form \"value=${VAR}\" "
+
+build_master_image:
   stage: image
   image: docker:stable
   before_script:
-  - "export VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') && \
-   docker login -u $DOCKER_REGISTRY_USERNAME -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY_HOST && \
-   echo $USERS > users.json"
+    - "export VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') && \
+        docker login -u $DOCKER_REGISTRY_USERNAME -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY_HOST"
   script:
     - docker build . -t nexus.engageska-portugal.pt/ska-telescope/webjive-auth:latest --label GIT_COMMIT=$CI_COMMIT_SHA
     - docker tag nexus.engageska-portugal.pt/ska-telescope/webjive-auth:latest nexus.engageska-portugal.pt/ska-telescope/webjive-auth:$VERSION
     - docker push nexus.engageska-portugal.pt/ska-telescope/webjive-auth:latest
     - docker push nexus.engageska-portugal.pt/ska-telescope/webjive-auth:$VERSION
+  only:
+    - master
+  
+build_develop_image:
+  stage: image
+  image: docker:stable
+  before_script:
+    - "export VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') && \
+        docker login -u $DOCKER_REGISTRY_USERNAME -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY_HOST"
+  script:
+    - docker build . -t nexus.engageska-portugal.pt/ska-telescope/webjive-auth:$VERSION-develop-$BUILD_NUMBER --label GIT_COMMIT=$CI_COMMIT_SHA
+    - docker push nexus.engageska-portugal.pt/ska-telescope/webjive-auth:$VERSION-develop-$BUILD_NUMBER
 
 create ci metrics:
   stage: .post
