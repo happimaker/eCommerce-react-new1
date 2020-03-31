@@ -116,7 +116,6 @@ build_deploy:
   dependencies:
     - test_coverage
     - code_quality
-    policy: pull
   script:
     - npm install 
 
