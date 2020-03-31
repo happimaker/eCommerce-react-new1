@@ -57,18 +57,10 @@ install_dependencies:
   stage: dependencies
   script:
     - npm ci
-  cache:
-    paths:
-      - node_modules/
-    policy: push
 
 # run the test linting and coverage reports
 test_coverage:
   stage: test
-  cache:
-    paths:
-      - node_modules/
-    policy: pull
   script:
     - mkdir -p build/reports
     - npm run test
@@ -87,10 +79,6 @@ test_coverage:
 list_dependencies:
   stage: test
   allow_failure: true
-  cache:
-    paths:
-      - node_modules/
-    policy: pull
   script:
     - npm list --depth=0 --json >> npm_deps.json
     - npm list --depth=0  >> npm_deps.txt
@@ -111,10 +99,6 @@ code_quality:
   allow_failure: true
   services:
     - docker:stable-dind
-  cache:
-    paths:
-      - node_modules/
-    policy: pull
   script:
     - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
     - docker run
@@ -132,9 +116,6 @@ build_deploy:
   dependencies:
     - test_coverage
     - code_quality
-  cache:
-    paths:
-      - node_modules/
     policy: pull
   script:
     - npm install 
