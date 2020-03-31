@@ -62,6 +62,7 @@ install_dependencies:
 test_coverage:
   stage: test
   script:
+    - npm ci
     - mkdir -p build/reports
     - npm run test
     - npm run linting
@@ -80,6 +81,7 @@ list_dependencies:
   stage: test
   allow_failure: true
   script:
+    - npm ci
     - npm list --depth=0 --json >> npm_deps.json
     - npm list --depth=0  >> npm_deps.txt
     - mkdir .public
