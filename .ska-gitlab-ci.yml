@@ -10,14 +10,12 @@ image: node:alpine
 #    DOCKER_REGISTRY_USER_LOGIN, DOCKER_REGISTRY_USER, DOCKER_REGISTRY_HOST,  DOCKER_AUTH_CONFIG, 
 #    CI_REGISTRY_PASS_LOGIN, CI_REGISTRY 
 
-services:
-  - docker:dind
-
 # cache is used to specify a list of files and directories which should be cached between jobs. You can only use paths that are within the project workspace.
 # If cache is defined outside the scope of jobs, it means it is set globally and all jobs will use that definition
 cache:
   paths:
     - build
+    - node_modules
 
 # before_script is used to define the command that should be run before all jobs, including deploy jobs, but after the restoration of artifacts.
 # This can be an array or a multi-line string. In this case node install will install all our dependencies including the scripts
@@ -59,19 +57,12 @@ install_dependencies:
   stage: dependencies
   script:
     - npm ci
-  cache:
-    paths:
-      - node_modules/
-    policy: push
 
 # run the test linting and coverage reports
 test_coverage:
   stage: test
-  cache:
-    paths:
-      - node_modules/
-    policy: pull
   script:
+    - npm ci
     - mkdir -p build/reports
     - npm run test
     - npm run linting
@@ -89,11 +80,8 @@ test_coverage:
 list_dependencies:
   stage: test
   allow_failure: true
-  cache:
-    paths:
-      - node_modules/
-    policy: pull
   script:
+    - npm ci
     - npm list --depth=0 --json >> npm_deps.json
     - npm list --depth=0  >> npm_deps.txt
     - mkdir .public
@@ -113,10 +101,6 @@ code_quality:
   allow_failure: true
   services:
     - docker:stable-dind
-  cache:
-    paths:
-      - node_modules/
-    policy: pull
   script:
     - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
     - docker run
@@ -134,10 +118,6 @@ build_deploy:
   dependencies:
     - test_coverage
     - code_quality
-  cache:
-    paths:
-      - node_modules/
-    policy: pull
   script:
     - npm install 
 
