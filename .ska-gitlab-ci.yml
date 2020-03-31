@@ -73,7 +73,7 @@ test_coverage:
     policy: pull
   script:
     - mkdir -p build/reports
-    - npm install
+    - npm ci
     - npm run test
     - npm run linting
     - npm run coverage
@@ -95,7 +95,7 @@ list_dependencies:
       - node_modules/
     policy: pull
   script:
-    - npm install
+    - npm ci
     - npm list --depth=0 --json >> npm_deps.json
     - npm list --depth=0  >> npm_deps.txt
     - mkdir .public
