@@ -7,6 +7,10 @@
 # production
 /build
 
+# docs
+/docs/build
+/docs/src/_build
+
 # coverage and reports
 /reports/
 /coverage/
