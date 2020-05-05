@@ -9,7 +9,7 @@
   },
   "scripts": {
     "quick-lint": "eslint --ignore-path .gitignore .; exit 0",
-    "linting": "eslint --ignore-path .gitignore . -f 'junit' -o linting.xml",
+    "linting": "eslint --ignore-pattern 'docs/' --ignore-path .gitignore . -f 'junit' -o linting.xml",
     "test": "jest --ci --reporters=default --reporters=jest-junit",
     "coverage": "jest --ci --colors --coverage --coverageDirectory=build/coverage"
   },
