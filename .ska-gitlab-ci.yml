@@ -3,6 +3,9 @@
 # In this case we use the latest node docker image to build and test this project.
 image: node:alpine
 
+services:
+  - docker:dind
+
 # Docker in Docker (dind) allows this CI file to be run locally (assuming you have docker installed).
 # Note this relies on a number of system variables on the local system. 
 # TODO: Find an elegant way of setting these in a robust way without exposing them in a public file.
