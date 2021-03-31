@@ -90,7 +90,7 @@ app.post('/login', passportMiddleware, (req, res) => {
   }
   const { username, groups } = user;
   const jwt = generateToken(username, groups);
-  res.cookie(COOKIE_NAME, jwt);
+  res.cookie(COOKIE_NAME, jwt, { sameSite: 'none', secure: true });
   res.json({ webjive_jwt: jwt });
 });
 
