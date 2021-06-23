@@ -171,20 +171,6 @@ build_develop_image:
     - docker build . -t $CAR_OCI_REGISTRY_HOST/ska-telescope/webjive-auth:$VERSION-develop-$BUILD_NUMBER --label GIT_COMMIT=$CI_COMMIT_SHA
     - docker push $CAR_OCI_REGISTRY_HOST/ska-telescope/webjive-auth:$VERSION-develop-$BUILD_NUMBER
 
-create ci metrics:
-  stage: .post
-  image: $CAR_OCI_REGISTRY_HOST/ska-docker/ska-python-buildenv:latest
-  when: always
-  tags:
-    - docker-executor
-  script:
-    # TODO replace with syst team version once working
-    # Gitlab CI badges creation: START
-    - apt-get -y update
-    - apt-get install -y curl --no-install-recommends
-    - curl -s https://gitlab.com/ska-telescope/ci-metrics-utilities/raw/master/scripts/ci-badges-func.sh | sh
-    # Gitlab CI badges creation: END    # Gitlab CI badges creation: END
-  artifacts:
-    paths:
-      - public
-      - ./build
+include:
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/post_step.yml'
