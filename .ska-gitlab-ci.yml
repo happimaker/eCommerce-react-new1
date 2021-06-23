@@ -153,10 +153,10 @@ build_master_image:
         docker login -u $DOCKER_REGISTRY_USERNAME -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY_HOST && \
         echo $USERS > users.json"     
   script:
-    - docker build . -t nexus.engageska-portugal.pt/ska-telescope/webjive-auth:latest --label GIT_COMMIT=$CI_COMMIT_SHA
-    - docker tag nexus.engageska-portugal.pt/ska-telescope/webjive-auth:latest nexus.engageska-portugal.pt/ska-telescope/webjive-auth:$VERSION
-    - docker push nexus.engageska-portugal.pt/ska-telescope/webjive-auth:latest
-    - docker push nexus.engageska-portugal.pt/ska-telescope/webjive-auth:$VERSION
+    - docker build . -t artefact.skatelescope.org/ska-telescope/webjive-auth:latest --label GIT_COMMIT=$CI_COMMIT_SHA
+    - docker tag artefact.skatelescope.org/ska-telescope/webjive-auth:latest artefact.skatelescope.org/ska-telescope/webjive-auth:$VERSION
+    - docker push artefact.skatelescope.org/ska-telescope/webjive-auth:latest
+    - docker push artefact.skatelescope.org/ska-telescope/webjive-auth:$VERSION
   only:
     - master
   
@@ -168,12 +168,12 @@ build_develop_image:
         docker login -u $DOCKER_REGISTRY_USERNAME -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY_HOST && \
         echo $USERS > users.json"
   script:
-    - docker build . -t nexus.engageska-portugal.pt/ska-telescope/webjive-auth:$VERSION-develop-$BUILD_NUMBER --label GIT_COMMIT=$CI_COMMIT_SHA
-    - docker push nexus.engageska-portugal.pt/ska-telescope/webjive-auth:$VERSION-develop-$BUILD_NUMBER
+    - docker build . -t artefact.skatelescope.org/ska-telescope/webjive-auth:$VERSION-develop-$BUILD_NUMBER --label GIT_COMMIT=$CI_COMMIT_SHA
+    - docker push artefact.skatelescope.org/ska-telescope/webjive-auth:$VERSION-develop-$BUILD_NUMBER
 
 create ci metrics:
   stage: .post
-  image: nexus.engageska-portugal.pt/ska-docker/ska-python-buildenv:latest
+  image: artefact.skatelescope.org/ska-docker/ska-python-buildenv:latest
   when: always
   tags:
     - docker-executor
