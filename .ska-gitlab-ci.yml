@@ -153,7 +153,29 @@ build_master_image:
         echo $CAR_OCI_REGISTRY_PASSWORD | docker login -u $CAR_OCI_REGISTRY_USERNAME --password-stdin $CAR_OCI_REGISTRY_HOST && \
         echo $USERS > users.json"     
   script:
-    - docker build . -t $CAR_OCI_REGISTRY_HOST/ska-webjive-auth:$VERSION --label GIT_COMMIT=$CI_COMMIT_SHA
+    - docker build . -t $CAR_OCI_REGISTRY_HOST/ska-webjive-auth:$VERSION --label GIT_COMMIT=$CI_COMMIT_SHA \
+                                                                                 CI_COMMIT_SHA=$CI_COMMIT_SHA \
+                                                                                 CI_JOB_ID=$CI_JOB_ID \
+                                                                                 CI_PIPELINE_ID=$CI_PIPELINE_ID \
+                                                                                 CI_COMMIT_AUTHOR=$CI_COMMIT_AUTHOR \
+                                                                                 CI_COMMIT_REF_NAME=$CI_COMMIT_REF_NAME \
+                                                                                 CI_COMMIT_REF_SLUG=$CI_COMMIT_REF_SLUG \
+                                                                                 CI_COMMIT_SHORT_SHA=$CI_COMMIT_SHORT_SHA \
+                                                                                 CI_COMMIT_TIMESTAMP=$CI_COMMIT_TIMESTAMP \
+                                                                                 CI_JOB_URL=$CI_JOB_URL \
+                                                                                 CI_PIPELINE_IID=$CI_PIPELINE_IID \
+                                                                                 CI_PIPELINE_URL=$CI_PIPELINE_URL \
+                                                                                 CI_PROJECT_ID=$CI_PROJECT_ID \
+                                                                                 CI_PROJECT_PATH_SLUG=$CI_PROJECT_PATH_SLUG \
+                                                                                 CI_PROJECT_URL=$CI_PROJECT_URL \
+                                                                                 CI_REPOSITORY_URL=$CI_REPOSITORY_URL \
+                                                                                 CI_RUNNER_ID=$CI_RUNNER_ID \
+                                                                                 CI_RUNNER_REVISION=$CI_RUNNER_REVISION \
+                                                                                 CI_RUNNER_TAGS=$CI_RUNNER_TAGS \
+                                                                                 GITLAB_USER_NAME=$GITLAB_USER_NAME \
+                                                                                 GITLAB_USER_EMAIL=$GITLAB_USER_EMAIL \
+                                                                                 GITLAB_USER_LOGIN=$GITLAB_USER_LOGIN \
+                                                                                 GITLAB_USER_ID=$GITLAB_USER_ID
     - docker tag $CAR_OCI_REGISTRY_HOST/ska-webjive-auth:$VERSION
     - docker push $CAR_OCI_REGISTRY_HOST/ska-webjive-auth:$VERSION
   only:
@@ -167,7 +189,29 @@ build_develop_image:
         echo $CAR_OCI_REGISTRY_PASSWORD | docker login -u $CAR_OCI_REGISTRY_USERNAME --password-stdin $CAR_OCI_REGISTRY_HOST && \
         echo $USERS > users.json"
   script:
-    - docker build . -t $CAR_OCI_REGISTRY_HOST/ska-webjive-auth:$VERSION-develop-$BUILD_NUMBER --label GIT_COMMIT=$CI_COMMIT_SHA
+    - docker build . -t $CAR_OCI_REGISTRY_HOST/ska-webjive-auth:$VERSION-develop-$BUILD_NUMBER --label GIT_COMMIT=$CI_COMMIT_SHA \
+                                                                                                        CI_COMMIT_SHA=$CI_COMMIT_SHA \
+                                                                                                        CI_JOB_ID=$CI_JOB_ID \
+                                                                                                        CI_PIPELINE_ID=$CI_PIPELINE_ID \
+                                                                                                        CI_COMMIT_AUTHOR=$CI_COMMIT_AUTHOR \
+                                                                                                        CI_COMMIT_REF_NAME=$CI_COMMIT_REF_NAME \
+                                                                                                        CI_COMMIT_REF_SLUG=$CI_COMMIT_REF_SLUG \
+                                                                                                        CI_COMMIT_SHORT_SHA=$CI_COMMIT_SHORT_SHA \
+                                                                                                        CI_COMMIT_TIMESTAMP=$CI_COMMIT_TIMESTAMP \
+                                                                                                        CI_JOB_URL=$CI_JOB_URL \
+                                                                                                        CI_PIPELINE_IID=$CI_PIPELINE_IID \
+                                                                                                        CI_PIPELINE_URL=$CI_PIPELINE_URL \
+                                                                                                        CI_PROJECT_ID=$CI_PROJECT_ID \
+                                                                                                        CI_PROJECT_PATH_SLUG=$CI_PROJECT_PATH_SLUG \
+                                                                                                        CI_PROJECT_URL=$CI_PROJECT_URL \
+                                                                                                        CI_REPOSITORY_URL=$CI_REPOSITORY_URL \
+                                                                                                        CI_RUNNER_ID=$CI_RUNNER_ID \
+                                                                                                        CI_RUNNER_REVISION=$CI_RUNNER_REVISION \
+                                                                                                        CI_RUNNER_TAGS=$CI_RUNNER_TAGS \
+                                                                                                        GITLAB_USER_NAME=$GITLAB_USER_NAME \
+                                                                                                        GITLAB_USER_EMAIL=$GITLAB_USER_EMAIL \
+                                                                                                        GITLAB_USER_LOGIN=$GITLAB_USER_LOGIN \
+                                                                                                        GITLAB_USER_ID=$GITLAB_USER_ID
     - docker push $CAR_OCI_REGISTRY_HOST/ska-webjive-auth:$VERSION-develop-$BUILD_NUMBER
 
 include:
