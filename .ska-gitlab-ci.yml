@@ -153,10 +153,9 @@ build_master_image:
         echo $CAR_OCI_REGISTRY_PASSWORD | docker login -u $CAR_OCI_REGISTRY_USERNAME --password-stdin $CAR_OCI_REGISTRY_HOST && \
         echo $USERS > users.json"     
   script:
-    - docker build . -t $CAR_OCI_REGISTRY_HOST/ska-telescope/webjive-auth:latest --label GIT_COMMIT=$CI_COMMIT_SHA
-    - docker tag $CAR_OCI_REGISTRY_HOST/ska-telescope/webjive-auth:latest artefact.skatelescope.org/ska-telescope/webjive-auth:$VERSION
-    - docker push $CAR_OCI_REGISTRY_HOST/ska-telescope/webjive-auth:latest
-    - docker push $CAR_OCI_REGISTRY_HOST/ska-telescope/webjive-auth:$VERSION
+    - docker build . -t $CAR_OCI_REGISTRY_HOST/ska-webjive-auth:$VERSION --label GIT_COMMIT=$CI_COMMIT_SHA
+    - docker tag $CAR_OCI_REGISTRY_HOST/ska-webjive-auth:$VERSION
+    - docker push $CAR_OCI_REGISTRY_HOST/ska-webjive-auth:$VERSION
   only:
     - master
   
@@ -168,8 +167,8 @@ build_develop_image:
         echo $CAR_OCI_REGISTRY_PASSWORD | docker login -u $CAR_OCI_REGISTRY_USERNAME --password-stdin $CAR_OCI_REGISTRY_HOST && \
         echo $USERS > users.json"
   script:
-    - docker build . -t $CAR_OCI_REGISTRY_HOST/ska-telescope/webjive-auth:$VERSION-develop-$BUILD_NUMBER --label GIT_COMMIT=$CI_COMMIT_SHA
-    - docker push $CAR_OCI_REGISTRY_HOST/ska-telescope/webjive-auth:$VERSION-develop-$BUILD_NUMBER
+    - docker build . -t $CAR_OCI_REGISTRY_HOST/ska-webjive-auth:$VERSION-develop-$BUILD_NUMBER --label GIT_COMMIT=$CI_COMMIT_SHA
+    - docker push $CAR_OCI_REGISTRY_HOST/ska-webjive-auth:$VERSION-develop-$BUILD_NUMBER
 
 include:
   - project: 'ska-telescope/templates-repository'
